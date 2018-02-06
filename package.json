@@ -4,7 +4,7 @@
   "author": "Red Hat, Inc.",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "tape test/*.js | tap-spec",
+    "test": "jest test/openshift-test.js",
     "lint": "eslint test/*.js app.js bin/*",
     "prepare": "nsp check",
     "coverage": "nyc npm test",
@@ -42,6 +42,7 @@
     "eslint-plugin-promise": "~3.6.0",
     "eslint-plugin-react": "^7.6.1",
     "eslint-plugin-standard": "~3.0.1",
+    "jest": "^22.1.4",
     "license-reporter": "^1.1.3",
     "nodeshift": "^1.3.0",
     "nsp": "~3.1.0",
