@@ -4,60 +4,60 @@ const openshiftAssistant = new OpenshiftTestAssistant();
 const path = require('path');
 const request = require('supertest');
 
-test('setup', (t) => {
-  t.plan(1);
-  openshiftAssistant.deploy({
-    'projectLocation': path.join(__dirname, '/..'),
-    'strictSSL': false
-  }).then(() => {
-    t.pass('Application deployed'); // indicate success
-  }).catch(reason => {
-    t.fail(reason);
-  });
-});
+const vows = require('vows'),
+  assert = require('assert');
 
-test('test openshift greeting with no query param', (t) => {
-  t.plan(1);
-  if (!openshiftAssistant.isReady()) {
-    t.skip('Application not ready, skipping the test');
-  } else {
-    request(openshiftAssistant.getRoute())
-      .get('/api/greeting')
-      .expect('Content-Type', /json/)
-      .expect(200)
-      .then(response => {
-        t.equal(response.body.content, 'Hello, World', 'Received message should math the expected one');
+vows.describe('')
+  .addBatch({
+  'setup': {
+    topic: function () {
+      return openshiftAssistant.deploy({
+        'projectLocation': path.join(__dirname, '/..'),
+        'strictSSL': false
+      }).then(() => {
+        vow.callback(null, "");
+      }).catch(reason => {
+        vow.callback(reason, null);
       })
-      .catch(reason => {
-        t.fail(reason);
-      });
-  }
-});
+    },
 
-test('test openshift greeting with query param', (t) => {
-  t.plan(1);
-  if (!openshiftAssistant.isReady()) {
-    t.skip('Application not ready, skipping the test');
-  } else {
-    request(openshiftAssistant.getRoute())
-      .get('/api/greeting?name=Luke')
-      .expect('Content-Type', /json/)
-      .expect(200)
-      .then(response => {
-        t.equal(response.body.content, 'Hello, Luke', 'Received message should math the expected one');
-      })
-      .catch(reason => {
-        t.fail(reason);
-      });
+    'was successfull': function (err, stat) {
+      assert.isNull (err);
+    }
   }
-});
-
-test('teardown', (t) => {
-  t.plan(1);
-  openshiftAssistant.undeploy()
-    .then(() => {
-      t.pass('Application successfully undeployed');
-    }).catch(reason => {
-      t.fail(reason);
-    });
-});
+  }).addBatch({
+    'test openshift greeting with no query param' : function(){
+      request(openshiftAssistant.getRoute())
+        .get('/api/greeting')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then(response => {
+          assert.equal(response.body.content, 'Hello, World', 'Received message should math the expected one');
+        })
+        .catch(reason => {
+          assert.fail(reason);
+        });
+    },
+    'test openshift greeting with query param' : function(){
+      request(openshiftAssistant.getRoute())
+        .get('/api/greeting?name=Luke')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then(response => {
+          assert.equal(response.body.content, 'Hello, Luke', 'Received message should math the expected one');
+        })
+        .catch(reason => {
+          assert.fail(reason);
+        });
+    }
+  }).addBatch({
+   'teardown' : function() {
+     openshiftAssistant.undeploy()
+       .then(() => {
+         assert.ok('undeployed');
+       }).catch(reason => {
+         assert.fail(reason);
+     });
+   }
+  })
+  .run(); // Run it
