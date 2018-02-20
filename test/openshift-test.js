@@ -19,7 +19,7 @@ describe('Openshift http', function () {
       .get('/api/greeting')
       .expect('Content-Type', /json/)
       .expect(200);
-    assert.equal(response.body.content, 'Hello, World', 'Received message should match the expected one');
+    assert.equal(response.body.content, 'Hello, World');
   });
 
   it('openshift greeting with query param', async () => {
@@ -27,7 +27,7 @@ describe('Openshift http', function () {
       .get('/api/greeting?name=Luke')
       .expect('Content-Type', /json/)
       .expect(200);
-    assert.equal(response.body.content, 'Hello, Luke', 'Received message should match the expected one');
+    assert.equal(response.body.content, 'Hello, Luke');
   });
 
   after(() => {

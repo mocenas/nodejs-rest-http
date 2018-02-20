@@ -1,26 +1,23 @@
-const test = require('tape');
 const supertest = require('supertest');
-
 const app = require('../app');
+const assert = require('assert');
 
-test('test out greeting route with no query param', (t) => {
-  supertest(app)
-    .get('/api/greeting')
-    .expect('Content-Type', /json/)
-    .expect(200)
-    .then(response => {
-      t.equal(response.body.content, 'Hello, World');
-      t.end();
-    });
-});
+describe('local tests', function(){
+  this.timeout(60000);
 
-test('test out greeting route with a query param', (t) => {
-  supertest(app)
-    .get('/api/greeting?name=Luke')
-    .expect('Content-Type', /json/)
-    .expect(200)
-    .then(response => {
-      t.equal(response.body.content, 'Hello, Luke');
-      t.end();
-    });
+  it('test out greeting route with no query param', async () => {
+    const response = await supertest(app)
+      .get('/api/greeting')
+      .expect('Content-Type', /json/)
+      .expect(200);
+    assert.equal(response.body.content, 'Hello, World');
+  });
+
+  it('test out greeting route with a query param', async () => {
+    const response = await supertest(app)
+      .get('/api/greeting?name=Luke')
+      .expect('Content-Type', /json/)
+      .expect(200);
+    assert.equal(response.body.content, 'Hello, Luke');
+  });
 });
